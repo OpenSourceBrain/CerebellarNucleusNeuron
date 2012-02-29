@@ -1,6 +1,6 @@
 # use glob syntax.
 syntax: glob
-
+cn*.dat
 *.pyc
 *i686
 *x86_64
