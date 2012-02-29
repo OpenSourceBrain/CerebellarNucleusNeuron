@@ -1,1 +1,41 @@
-GENESIS version of CN cell
+README for the cerebellar nucleus neuron model described in the paper:
+
+Volker Steuber, Nathan Schultheiss, R. Angus Silver, Erik De Schutter
+& Dieter Jaeger (2010). Determinants of synaptic integration and
+heterogeneity in rebound firing explored with data-driven models of
+deep cerebellar nucleus cells. Journal of Computational Neuroscience,
+in press.
+
+Files included:
+
+cn0106c_z15_l01_ax.p 	CN neuron morphology 
+cn_chan.g      		functions that create ion channel prototypes
+cn_comp.g   		functions that create compartments
+cn_fileout.g      	functions that provide output to files
+cn_syn.g       		functions that create synapse prototypes
+cn_vclamp.g      	functions that create a voltage clamp circuit
+cn_AMPAcomps.txt      	list of compartments containing AMPA and NMDA receptors
+cn_cip_main.g  		main simulation script for current injection
+cn_const.g  		simulation parameters
+cn_GABAcomps.txt  	list of compartments containing GABAA receptors
+cn_syn_main.g  		main simulation script for synaptic input
+cn_vclamp_main.g  	main simulation script for voltage clamp simulations
+
+
+Figure 1 (b)
+run with genesis cn_cip_main.g  	
+in cn_const.g, set
+cipamp = 50.0e-12 
+ciponset = 5.0
+cipdur = 1.5
+GNaPs = 1
+Ghs = 0
+GCaLVAs = 0
+
+
+
+
+
+
+
+
