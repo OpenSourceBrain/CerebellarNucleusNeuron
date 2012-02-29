@@ -9,7 +9,7 @@ part of NeuroML or any standardised XML specification. -->
 
  <object class="ucl.physiol.neuroconstruct.project.BasicProjectInfo">
   <void property="projectDescription">
-   <string>Initial impl of Steuber, Schultheiss, Silver, De Schutter &amp; Jaeger Deep Cerebellar Nucleus cell model in NeuroML based on original GENESIS scripts
+   <string>Initial implememtation of Steuber, Schultheiss, Silver, De Schutter &amp; Jaeger&apos;s 2011 Deep Cerebellar Nucleus cell model in NeuroML based on original GENESIS scripts.  
 
 --  Default Simulation Configuration	
 
