@@ -13,11 +13,15 @@ part of NeuroML or any standardised XML specification. -->
 
 --  Default Simulation Configuration	
 
-This Sim Config will run a single compartment with passive conductance and an NaF channel. It compares the behaviour of this implemented using the original GENESIS script for the channel against the equivalent in ChannelML. Runs in GENESIS, MOOSE (but still an issue with saving all traces) and NEURON (though the cell group using the cell with the original script format will have to be removed from the sim config at Generate -&gt; Edit Sim Config)
+This Sim Config will run a single compartment with passive conductance and a single channel. It compares the behaviour of this channel implemented using the original GENESIS script for the channel against the equivalent in ChannelML. Runs in GENESIS, MOOSE (but still an issue with saving all rate variable traces).
 
 --  DCN_RecordAllSegs
 
 This will run the (passive) reconstructed cell, apply a pulse current to the soma and record electrical activity in all segments of the cell, which can then be replayed in neuroConstruct
+
+TESTED:
+
+fKdr: Original GENESIS == CML -&gt; GENESIS &amp; NEURON &amp; MOOSE &amp; NeuroML 2
 
 </string>
   </void>
@@ -844,6 +848,68 @@ This will run the (passive) reconstructed cell, apply a pulse current to the som
      </void>
     </object>
    </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>Soma_CML</string>
+     </void>
+     <void property="cellNumber">
+      <string>0</string>
+     </void>
+     <void property="graphWindow">
+      <string>GraphWin_1</string>
+     </void>
+     <void property="maxValue">
+      <float>1.0</float>
+     </void>
+     <void property="minValue">
+      <float>0.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>Var_13</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+     <void property="valuePlotted">
+      <string>fKdr:n</string>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimPlot">
+     <void property="cellGroup">
+      <string>Soma_GEN</string>
+     </void>
+     <void property="cellNumber">
+      <string>0</string>
+     </void>
+     <void property="graphWindow">
+      <string>GraphWin_1</string>
+     </void>
+     <void property="maxValue">
+      <float>1.0</float>
+     </void>
+     <void property="minValue">
+      <float>0.0</float>
+     </void>
+     <void property="plotAndOrSave">
+      <string>Plot and save</string>
+     </void>
+     <void property="plotReference">
+      <string>Var_14</string>
+     </void>
+     <void property="segmentId">
+      <string>0</string>
+     </void>
+     <void property="valuePlotted">
+      <string>fKdr_GEN:X</string>
+     </void>
+    </object>
+   </void>
   </void>
  </object>
  <object class="ucl.physiol.neuroconstruct.project.ProjectProperties">
@@ -901,7 +967,7 @@ ce soma</string>
    <float>0.12</float>
   </void>
   <void property="reference">
-   <string>Sim_79</string>
+   <string>Sim_94</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
@@ -960,7 +1026,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -988,7 +1054,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1016,7 +1082,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1044,7 +1110,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1072,7 +1138,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1294,7 +1360,7 @@ ce soma</string>
       </void>
      </void>
      <void property="description">
-      <string>This is the default configuration of the Cell Groups, stimulations, plots, etc for this project</string>
+      <string>This is the default configuration of the Cell Groups, stimulations, plots, etc for this project. Just tests a number of the channels in ChannelML against the original GENESIS implementations</string>
      </void>
      <void property="inputs">
       <void method="add">
@@ -1318,13 +1384,10 @@ ce soma</string>
        <string>Soma_CML_v</string>
       </void>
       <void method="add">
-       <string>Var_12</string>
+       <string>Var_14</string>
       </void>
       <void method="add">
-       <string>Var_11</string>
-      </void>
-      <void method="add">
-       <string>Var_10</string>
+       <string>Var_13</string>
       </void>
       <void method="add">
        <string>CG_CML_NaF_v</string>
@@ -1333,41 +1396,17 @@ ce soma</string>
        <string>Soma_GEN_v</string>
       </void>
       <void method="add">
-       <string>CG_GEN_fKdr_v</string>
-      </void>
-      <void method="add">
-       <string>Var_9</string>
-      </void>
-      <void method="add">
-       <string>Var_8</string>
-      </void>
-      <void method="add">
-       <string>Var_6</string>
-      </void>
-      <void method="add">
-       <string>Var_5</string>
-      </void>
-      <void method="add">
-       <string>Var_4</string>
-      </void>
-      <void method="add">
-       <string>Var_3</string>
-      </void>
-      <void method="add">
        <string>CG_GEN_NaF_v</string>
       </void>
       <void method="add">
-       <string>Var_2</string>
-      </void>
-      <void method="add">
-       <string>Var_1</string>
+       <string>Var_0</string>
       </void>
       <void method="add">
        <string>CG_CML_fKdr_v</string>
       </void>
      </void>
      <void property="simDuration">
-      <float>1400.0</float>
+      <float>1000.0</float>
      </void>
     </object>
    </void>
@@ -1379,7 +1418,7 @@ ce soma</string>
       </void>
      </void>
      <void property="description">
-      <string>Record all of the segment membrane potentials</string>
+      <string>Record all of the segment membrane potentials in a (passive) multicompartment model</string>
      </void>
      <void property="inputs">
       <void method="add">
@@ -1506,6 +1545,94 @@ ce soma</string>
      </void>
      <void property="simDuration">
       <float>800.0</float>
+     </void>
+    </object>
+   </void>
+   <void method="add">
+    <object class="ucl.physiol.neuroconstruct.project.SimConfig">
+     <void property="cellGroups">
+      <void method="add">
+       <string>Soma_CML</string>
+      </void>
+     </void>
+     <void property="description">
+      <string>Test a single compartment cell with a number of ChannelML mechs, for use on multiple simulators</string>
+     </void>
+     <void property="inputs">
+      <void method="add">
+       <string>Input_2</string>
+      </void>
+      <void method="add">
+       <string>Input_1</string>
+      </void>
+      <void method="add">
+       <string>Input_0</string>
+      </void>
+      <void method="add">
+       <string>Input_4</string>
+      </void>
+      <void method="add">
+       <string>Input_3</string>
+      </void>
+     </void>
+     <void property="name">
+      <string>Test_CML</string>
+     </void>
+     <void property="plots">
+      <void method="add">
+       <string>Soma_CML_v</string>
+      </void>
+      <void method="add">
+       <string>Var_13</string>
+      </void>
+      <void method="add">
+       <string>Var_12</string>
+      </void>
+      <void method="add">
+       <string>Var_11</string>
+      </void>
+      <void method="add">
+       <string>CG_CML_NaF_v</string>
+      </void>
+      <void method="add">
+       <string>Soma_GEN_v</string>
+      </void>
+      <void method="add">
+       <string>CG_GEN_fKdr_v</string>
+      </void>
+      <void method="add">
+       <string>Var_8</string>
+      </void>
+      <void method="add">
+       <string>Var_7</string>
+      </void>
+      <void method="add">
+       <string>Var_6</string>
+      </void>
+      <void method="add">
+       <string>Var_5</string>
+      </void>
+      <void method="add">
+       <string>Var_4</string>
+      </void>
+      <void method="add">
+       <string>Var_3</string>
+      </void>
+      <void method="add">
+       <string>CG_GEN_NaF_v</string>
+      </void>
+      <void method="add">
+       <string>Var_2</string>
+      </void>
+      <void method="add">
+       <string>Var_1</string>
+      </void>
+      <void method="add">
+       <string>CG_CML_fKdr_v</string>
+      </void>
+     </void>
+     <void property="simDuration">
+      <float>1000.0</float>
      </void>
     </object>
    </void>

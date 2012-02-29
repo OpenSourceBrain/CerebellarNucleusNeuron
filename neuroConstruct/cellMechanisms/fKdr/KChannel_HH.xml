@@ -34,7 +34,7 @@
                 <closed_state id="n0"/>
                 <open_state id="n"/>
 
-                <time_course name="tau" from="n0" to="n" expr_form="generic" expr="0.0001 + (0.0139/((exp ( (-0.040 - v)/-0.012 ) ) + (exp (-1 * ((-0.040 - v)/-0.013 )))))"/>
+                <time_course name="tau" from="n0" to="n" expr_form="generic" expr="0.0001 + (0.0139/((exp ( ((-0.040) - v)/ (-0.012) ) ) + (exp (-1 * (( (-0.040) - v)/ (-0.013) )))))"/>
 
                 <steady_state name="inf" from="n0" to="n" expr_form="sigmoid" rate="1" scale="-0.0078" midpoint="-0.040"/>
                     
