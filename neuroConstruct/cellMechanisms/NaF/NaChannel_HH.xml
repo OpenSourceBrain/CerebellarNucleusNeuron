@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xsi:schemaLocation="http://morphml.org/channelml/schema   http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+        
+    <meta:notes>....</meta:notes>
+
+    <channel_type name="NaF" density="yes">
+        
+        <status value="in_progress">
+            <meta:comment>Not yet fully tested</meta:comment>
+        </status>
+
+        <meta:notes>....</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="na" default_erev="0.07119435072" default_gmax="1200">
+
+
+            <q10_settings q10_factor="3" experimental_temp="32"/> 
+
+            
+            <gate name="m" instances="3">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+
+                <time_course name="tau" from="m0" to="m" expr_form="generic" expr="5.833e-3/((exp ((v - 0.0064)/-0.009)) + (exp ((v + 0.097)/0.017))) + 2.5e-5"/>
+
+                <steady_state name="inf" from="m0" to="m" expr_form="sigmoid" rate="1" scale="-0.007324" midpoint="-0.045"/>
+
+            </gate>
+            
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+
+                <time_course name="tau" from="h0" to="h" expr_form="generic" expr="16.67e-3/((exp ((v - 0.0083)/-0.029)) + (exp ((v + 0.066)/0.009))) + 2.0e-04"/>
+
+                <steady_state name="inf" from="h0" to="h" expr_form="sigmoid" rate="1" scale="0.0059" midpoint="-0.042"/>
+                
+            </gate>
+            
+        </current_voltage_relation>
+
+        <impl_prefs>
+            <table_settings max_v="0.1" min_v="-0.15" table_divisions="300"/>
+        </impl_prefs>
+
+        
+        
+    </channel_type>
+</channelml>
