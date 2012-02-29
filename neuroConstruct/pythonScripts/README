@@ -1,0 +1,5 @@
+Files here can be run using:  'nC.bat -python XXX.py' (Windows)
+or 'nC.sh -python XXX.py' (Linux/Mac). Note: you may have to update the
+NC_HOME and NC_MAX_MEMORY variables in nC.bat/nC.sh
+
+See http://www.neuroconstruct.org/docs/python.html for more details on this...

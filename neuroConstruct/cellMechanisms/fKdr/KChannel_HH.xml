@@ -9,8 +9,9 @@
 
     <channel_type name="fKdr">
         
-        <status value="in_progress">
-            <meta:comment>Not yet fully tested</meta:comment>
+        <status value="stable">
+            <meta:comment>Tested this version against original GENESIS implementation and matched on GENESIS, MOOSE, NEURON and LEMS</meta:comment>
+            <meta:contributor>Padraig Gleeson</meta:contributor>
         </status>
 
         <meta:notes>....</meta:notes>

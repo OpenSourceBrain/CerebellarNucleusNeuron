@@ -11,17 +11,19 @@ part of NeuroML or any standardised XML specification. -->
   <void property="projectDescription">
    <string>Initial implememtation of Steuber, Schultheiss, Silver, De Schutter &amp; Jaeger&apos;s 2011 Deep Cerebellar Nucleus cell model in NeuroML based on original GENESIS scripts.  
 
---  Default Simulation Configuration	
-
-This Sim Config will run a single compartment with passive conductance and a single channel. It compares the behaviour of this channel implemented using the original GENESIS script for the channel against the equivalent in ChannelML. Runs in GENESIS, MOOSE (but still an issue with saving all rate variable traces).
+--  Default Simulation Configuration:	
+This Sim Config will run a single compartment cell with a passive conductance and a number of channels. It compares the behaviour of this channel implemented using the original GENESIS script for the channel against the equivalent in ChannelML. Runs in GENESIS, MOOSE (but still an issue with saving all rate variable traces).
 
 --  DCN_RecordAllSegs
-
 This will run the (passive) reconstructed cell, apply a pulse current to the soma and record electrical activity in all segments of the cell, which can then be replayed in neuroConstruct
+
+-- Test_CML: 
+This will run just the ChannelML version of the single comp cell from the default sim config, to test the cell on NEURON, MOOSE &amp; LEMS/NeuroML 2
 
 TESTED:
 
 fKdr: Original GENESIS == CML -&gt; GENESIS &amp; NEURON &amp; MOOSE &amp; NeuroML 2
+NaF: Original GENESIS == CML -&gt; GENESIS &amp; NEURON &amp; MOOSE &amp; NeuroML 2
 
 </string>
   </void>
@@ -587,7 +589,7 @@ fKdr: Original GENESIS == CML -&gt; GENESIS &amp; NEURON &amp; MOOSE &amp; Neuro
       <string>*</string>
      </void>
      <void property="graphWindow">
-      <string>CG_GEN_NaF_v</string>
+      <string>CG_CML_NaF_v</string>
      </void>
      <void property="maxValue">
       <float>50.0</float>
@@ -946,6 +948,9 @@ fKdr: Original GENESIS == CML -&gt; GENESIS &amp; NEURON &amp; MOOSE &amp; Neuro
  </object>
  <object class="ucl.physiol.neuroconstruct.neuron.NeuronSettings"/>
  <object class="ucl.physiol.neuroconstruct.genesis.GenesisSettings">
+  <void property="mooseCompatMode">
+   <boolean>true</boolean>
+  </void>
   <void property="nativeBlocks">
    <void method="put">
     <int>15</int>
@@ -967,7 +972,7 @@ ce soma</string>
    <float>0.12</float>
   </void>
   <void property="reference">
-   <string>Sim_94</string>
+   <string>Sim_112</string>
   </void>
   <void property="saveCopyGenSimFiles">
    <boolean>true</boolean>
@@ -1166,7 +1171,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1194,7 +1199,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1222,7 +1227,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1250,7 +1255,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1278,7 +1283,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1306,7 +1311,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1334,7 +1339,7 @@ ce soma</string>
      </void>
      <void property="dur">
       <void property="fixedNum">
-       <float>100.0</float>
+       <float>200.0</float>
       </void>
       <void property="numberType">
        <int>11</int>
@@ -1390,10 +1395,25 @@ ce soma</string>
        <string>Var_13</string>
       </void>
       <void method="add">
+       <string>Var_12</string>
+      </void>
+      <void method="add">
+       <string>Var_11</string>
+      </void>
+      <void method="add">
+       <string>Var_10</string>
+      </void>
+      <void method="add">
        <string>CG_CML_NaF_v</string>
       </void>
       <void method="add">
        <string>Soma_GEN_v</string>
+      </void>
+      <void method="add">
+       <string>Var_9</string>
+      </void>
+      <void method="add">
+       <string>Var_8</string>
       </void>
       <void method="add">
        <string>CG_GEN_NaF_v</string>
@@ -1442,9 +1462,6 @@ ce soma</string>
     <object class="ucl.physiol.neuroconstruct.project.SimConfig">
      <void property="cellGroups">
       <void method="add">
-       <string>CG_GEN_NaF</string>
-      </void>
-      <void method="add">
        <string>CG_CML_NaF</string>
       </void>
      </void>
@@ -1473,9 +1490,6 @@ ce soma</string>
        <string>CG_CML_NaF_v</string>
       </void>
       <void method="add">
-       <string>CG_GEN_NaF_v</string>
-      </void>
-      <void method="add">
        <string>Var_6</string>
       </void>
       <void method="add">
@@ -1488,6 +1502,9 @@ ce soma</string>
        <string>Var_3</string>
       </void>
       <void method="add">
+       <string>CG_GEN_NaF_v</string>
+      </void>
+      <void method="add">
        <string>Var_2</string>
       </void>
       <void method="add">
@@ -1495,7 +1512,7 @@ ce soma</string>
       </void>
      </void>
      <void property="simDuration">
-      <float>800.0</float>
+      <float>1000.0</float>
      </void>
     </object>
    </void>
@@ -1583,6 +1600,9 @@ ce soma</string>
        <string>Soma_CML_v</string>
       </void>
       <void method="add">
+       <string>Var_14</string>
+      </void>
+      <void method="add">
        <string>Var_13</string>
       </void>
       <void method="add">
@@ -1592,6 +1612,9 @@ ce soma</string>
        <string>Var_11</string>
       </void>
       <void method="add">
+       <string>Var_10</string>
+      </void>
+      <void method="add">
        <string>CG_CML_NaF_v</string>
       </void>
       <void method="add">
@@ -1599,6 +1622,9 @@ ce soma</string>
       </void>
       <void method="add">
        <string>CG_GEN_fKdr_v</string>
+      </void>
+      <void method="add">
+       <string>Var_9</string>
       </void>
       <void method="add">
        <string>Var_8</string>
