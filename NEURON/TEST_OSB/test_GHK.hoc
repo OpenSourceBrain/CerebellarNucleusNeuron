@@ -1,0 +1,156 @@
+
+load_file("nrngui.hoc")
+
+
+
+{celsius = 37.0}
+
+create soma
+
+soma {pt3dclear() pt3dadd(0, 0, 0, 14.398) pt3dadd(32.3955, 0, 0, 14.398)}
+
+
+
+// Reversal potentials in mV
+SodiumRevPot = 71
+PotassiumRevPot = -90
+
+// Set the temperature of the simulation. The model has been titrated to reproduce
+// in vivo like firing at celsius = 37.0 (default), while the original GENESIS
+// DCN model was constructed with temp = 32 deg celsius.
+celsius = 37.0
+TempOrigDCN = 32.0
+
+// Temperature adjustments
+
+// TempAnchisi = the temperature in the middle of the given range of room temperature
+// recording in Anchisi D, Scelfo B, Tempia F (2001) Postsynaptic currents in deep
+// cerebellar nuclei. J Neurophysiol 85:323-331.
+TempAnchisi = 24.0
+
+Q10channelGating = 3.0 // Middle of experimentally shown range (2-4) of ion channel gating,
+        // see Hille 3rd ed (2001), p.51.
+Q10synapseGating = 2.0 // (Silver et al., 1996; Otis and Mody, 1992) Synaptic Q10s are given
+        // for GABA and excitatory synapses in Otis and Mody (1992), and Silver et al. (1996),
+        // respectively (full references below), with both giving Q10s in the region of 2.
+Q10conductances = 1.4 // The middle of the range (1.2-1.5) given in Hille 3rd ed (2001)
+        // for ion channel conductances (p.51). Also, eg Milburn et al (1995)
+        // Receptors Channels 3:201-211: �The conductance increases steeply with temperature,
+        // with Q10 ranging from 1.4 to 1.5�. However, also note Cao XJ, Oertel D (2005)
+        // J Neurophysiol 94:821-832. They get the results that some conductances have a
+        // Q10 of 2 while other channel conductances don�t change at all by changing
+        // temp (Q10=1).
+Q10CaConc = 2.0 // Guesswork: I assume that calcium concentration changes due to a
+        // combination of diffusion (Q10 of ca 1.4) and pumping action (Q10 of enzymatic
+        // reactions = ca 3)
+
+QdTsynapseTausAnchisi = Q10synapseGating^((celsius - TempAnchisi) / 10.0)
+QdTconductanceAnchisi = Q10conductances^((celsius - TempAnchisi) / 10.0)
+QdTchannelGating = Q10channelGating^((celsius - TempOrigDCN) / 10.0)
+QdTsynapseTaus = Q10synapseGating^((celsius - TempOrigDCN) / 10.0)
+QdTconductances = Q10conductances^((celsius - TempOrigDCN) / 10.0)
+QdTCaConc = Q10CaConc^((celsius - TempOrigDCN) / 10.0)
+
+// Passive electrical parameters.
+RA = 235.3 // ohm * cm
+CM = 1.57 // microfarad / cm2
+CMMYEL = CM/100
+PASSCOND = 2.81e-5*QdTconductances // S/cm2  passive conductance
+
+permCaLVAsoma = 1.77e-5*QdTconductances
+
+soma {
+
+        cm = CM
+        Ra = RA
+
+        insert pasDCN
+        gbar_pasDCN = PASSCOND
+
+        //ena = SodiumRevPot
+        //ek = PotassiumRevPot
+
+        insert CaLVA
+        perm_CaLVA = permCaLVAsoma
+        qdeltat_CaLVA = QdTchannelGating
+}
+
+access soma
+
+objectvar stim0
+
+
+{
+    stim0 = new IClamp(0.5) 
+    stim0.del = 100.0
+    stim0.dur = 100.0
+    stim0.amp = 0.02
+}
+
+
+tstop = 300.0
+dt = 0.025
+steps_per_ms = 40.0
+
+
+objref Soma_CML_v
+Soma_CML_v = new Graph(0)
+{Soma_CML_v.size(0, tstop,-70.0,20.0)}
+{Soma_CML_v.view(0, -70.0, tstop, 90.0, 50, 130, 330, 250)}
+{
+    Soma_CML_v.addexpr("soma.v", "soma.v(0.5)", 1, 1, 0.8, 0.9, 2)
+    graphList[0].append(Soma_CML_v)
+}
+
+objref Soma_CML_ical
+Soma_CML_ical = new Graph(0)
+{Soma_CML_ical.size(0, tstop,-6e-5,0)}
+{Soma_CML_ical.view(0, -6e-5, tstop, 6e-5, 400, 130, 330, 250)}
+{
+    Soma_CML_ical.addexpr("soma.ical_CaLVA", "soma.ical_CaLVA(0.5)", 1, 1, 0.8, 0.9, 2)
+    graphList[0].append(Soma_CML_ical)
+}
+
+objref Soma_CML_mh
+Soma_CML_mh = new Graph(0)
+{Soma_CML_mh.size(0, tstop,0,1)}
+{Soma_CML_mh.view(0, 0, tstop, 1, 800, 130, 330, 250)}
+
+{
+    Soma_CML_mh.addexpr("soma.m_CaLVA", "soma.m_CaLVA(0.5)", 1, 1, 0.8, 0.9, 2)
+    Soma_CML_mh.addexpr("soma.h_CaLVA", "soma.h_CaLVA(0.5)", 2, 1, 0.8, 0.9, 2)
+    graphList[0].append(Soma_CML_mh)
+}
+
+objref v_time
+objref f_time
+objref propsFile
+
+v_time = new Vector()
+{ v_time.record(&t) }
+{ v_time.resize(200001) }
+f_time = new File()
+
+
+objref v_Soma
+{ v_Soma = new Vector() }
+{ v_Soma.record(&soma.v(0.5))}
+{ v_Soma.resize(200001) }
+
+objref f_Soma
+
+
+print "Starting simulation of duration ",tstop,"ms"
+
+{cvode.active(1)}
+{cvode.atol(1.0E-5)}
+{run()}
+
+print "Finished simulation"
+
+f_Soma = new File()
+strdef filename
+filename = "GHK_Soma.dat"
+f_Soma.wopen(filename)
+v_Soma.printf(f_Soma)
+f_Soma.close()
