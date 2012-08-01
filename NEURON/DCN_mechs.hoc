@@ -1,0 +1,297 @@
+/* Author: Johannes Luthman
+
+This file inserts the ion channels, synapses, and other biophysics into the DCN neuron.
+
+Subroutines in this file:
+    main: DCNmechs()
+    setBiophysics()
+    insertChannels()
+    insertSynapses()
+    fixCaIons()
+*/
+
+objref ampa[EXCTOTALSYNAPSES]
+objref fnmda[EXCTOTALSYNAPSES]
+objref snmda[EXCTOTALSYNAPSES]
+objref gaba[INHTOTALSYNAPSES]
+
+
+proc DCNmechs() {
+    setBiophysics()
+    insertChannels()
+    insertSynapses()
+    fixCaIons()
+}
+
+proc setBiophysics() {
+
+    // insert biophysics common to all compartments
+    forall {
+        cm = CM
+        Ra = RA
+
+        insert pasDCN
+        gbar_pasDCN = PASSCOND
+    }
+
+    // Change conductance and resistivity of the axon, the only compartment type with
+    // "non-standard" conductance and resistivity.
+    forsec axNode {
+        cm = CMMYEL
+        gbar_pasDCN = PASSCONDMYEL
+    }
+}
+
+proc insertChannels() {
+
+    // For each type of compartment, insert NMODL mechanisms
+    // (ion channels and ca-concentration).
+
+    // The qdeltat variable is GLOBAL in the NMODLs, meaning that it only needs to be
+    // specified once for each mechanism, here in the soma (which contains a copy of
+    // each mechanism).
+    soma {
+
+        insert NaF
+        gbar_NaF = gNaFsoma
+        qdeltat_NaF = QdTchannelGating
+
+        insert NaP
+        gbar_NaP = gNaPsoma
+        qdeltat_NaP = QdTchannelGating
+
+        ena = SodiumRevPot
+
+        insert fKdr
+        gbar_fKdr = gfKdrsoma
+        qdeltat_fKdr = QdTchannelGating
+
+        insert sKdr
+        gbar_sKdr = gsKdrsoma
+        qdeltat_sKdr = QdTchannelGating
+
+        insert SK
+        gbar_SK = gSKsoma
+        qdeltat_SK = QdTchannelGating
+
+        ek = PotassiumRevPot
+
+
+        insert h
+        gbar_h = gHsoma
+        qdeltat_h = QdTchannelGating
+        eh_h = hRevPot
+
+
+        insert TNC
+        gbar_TNC = gTNCsoma
+        eTNC_TNC = TNCrevPot
+
+
+        // calcium channels - they use the Goldman-Hodgkin-Katz (GHK) current equation
+        // and so don't have a set reversal potential.
+        insert CaLVA
+        perm_CaLVA = permCaLVAsoma
+        qdeltat_CaLVA = QdTchannelGating
+
+        insert CaHVA
+        perm_CaHVA = permCaHVAsoma
+        qdeltat_CaHVA = QdTchannelGating
+
+
+        // insert a hypothetical shell below the membrane of the cell to keep track of the
+        // calcium entering the cell through the CaHVA and CaLVA channels, respectively.
+        // The resulting calcium concentration is used to calculate the current flow through
+        // through those channels.
+
+        // For the CaHVA channel:
+
+        insert CaConc
+        tauCa_CaConc = tauCaConcSoma
+        kCa_CaConc = kCaCaConcSoma
+
+        // For the soma, the calculation of shell thickness is different from
+        // the dendrites since it is a sphere in GENESIS and a cylinder
+        // in NEURON. See how it's done in GENESIS file cn_comp_dj10.g and
+        // divide that expression by the surface area of the NEURON soma to get
+        // the following expression:
+        depth_CaConc = SHELLTHICK - 2*SHELLTHICK^2/diam + \
+                4*SHELLTHICK^3/(3*diam^2) // =0.196215
+
+
+        // For the CaLVA channel:
+
+        insert CalConc
+        tauCal_CalConc = tauCaConcSoma
+        kCal_CalConc = kCaCaConcSoma
+        depth_CalConc = SHELLTHICK - 2*SHELLTHICK^2/diam + \
+                4*SHELLTHICK^3/(3*diam^2) // =0.196215
+    }
+
+    forsec axHillock {
+        insert NaF
+        gbar_NaF = gNaFaxHill
+        ena = SodiumRevPot
+
+        insert fKdr
+        gbar_fKdr = gfKdraxHill
+        insert sKdr
+        gbar_sKdr = gsKdraxHill
+        ek = PotassiumRevPot
+
+        insert TNC
+        gbar_TNC = gTNCaxHill
+        eTNC_TNC = TNCrevPot
+    }
+
+    forsec axIniSeg {
+        insert NaF
+        gbar_NaF = gNaFaxIniSeg
+        ena = SodiumRevPot
+
+        insert fKdr
+        gbar_fKdr = gfKdraxIniSeg
+        insert sKdr
+        gbar_sKdr = gsKdraxIniSeg
+        ek = PotassiumRevPot
+
+        insert TNC
+        gbar_TNC = gTNCaxIniSeg
+        eTNC_TNC = TNCrevPot
+    }
+
+    // No channels in the axon.
+    // forsec axNode {
+    // }
+
+    forsec proxDend {
+        insert NaF
+        gbar_NaF = gNaFpDend
+        ena = SodiumRevPot
+
+        insert fKdr
+        gbar_fKdr = gfKdrpDend
+        insert sKdr
+        gbar_sKdr = gsKdrpDend
+        insert SK
+        gbar_SK = gSKpDend
+        ek = PotassiumRevPot
+
+        insert h
+        gbar_h = gHpDend
+        eh_h = hRevPot
+
+        insert TNC
+        gbar_TNC = gTNCpDend
+        eTNC_TNC = TNCrevPot
+
+        insert CaLVA
+        perm_CaLVA = permCaLVAdend
+
+        insert CaHVA
+        perm_CaHVA = permCaHVAdend
+
+        insert CaConc
+        kCa_CaConc = kCaCaConcDend
+        depth_CaConc = SHELLTHICK - (SHELLTHICK*SHELLTHICK/diam)
+
+        insert CalConc
+        kCal_CalConc = kCaCaConcDend
+        depth_CalConc = SHELLTHICK - (SHELLTHICK*SHELLTHICK/diam)
+    }
+
+    forsec distDend {
+        insert SK
+        gbar_SK = gSKdDend
+        ek = PotassiumRevPot
+
+        insert h
+        gbar_h = gHdDend
+        eh_h = hRevPot
+
+        insert CaLVA
+        perm_CaLVA = permCaLVAdend
+
+        insert CaHVA
+        perm_CaHVA = permCaHVAdend
+
+        insert CaConc
+        kCa_CaConc = kCaCaConcDend
+        depth_CaConc = SHELLTHICK - (SHELLTHICK*SHELLTHICK/diam)
+
+        insert CalConc
+        kCal_CalConc = kCaCaConcDend
+        depth_CalConc = SHELLTHICK - (SHELLTHICK*SHELLTHICK/diam)
+    }
+} // end proc insertChannels()
+
+proc insertSynapses() {
+
+    // GABAergic synapses
+    // If the short term depression variant of the GABA synapse is used, then calculate
+    // the depression level to start out with. Set the level to that reached at steady state
+    // with the present input frequency, using the equation from DCNsynGABA.mod giving "relProbSS".
+    if (useGABAsyndep == 1) {
+        initDeprLevel = 0.08 + 0.60*exp(-2.84*inhibitoryHz) + 0.32*exp(-0.02*inhibitoryHz)
+    }
+    
+    c = 0
+    forsec inhSynapseComps {
+        if (useGABAsyndep == 1) {
+            gaba[c] = new DCNsynGABA(0.5)
+            gaba[c].startDeprLevel = initDeprLevel
+        } else {
+            gaba[c] = new DCNsyn(0.5)
+        }
+        gaba[c].tauRise = tauRiseGABA
+        gaba[c].tauFall = tauFallGABA
+        gaba[c].e = GABARevPot
+        c+=1
+    }
+
+    // Excitatory synapses
+    c = 0
+    forsec excSynapseComps {
+
+        ampa[c] = new DCNsyn(0.5)
+        ampa[c].tauRise = tauRiseAMPA
+        ampa[c].tauFall = tauFallAMPA
+        ampa[c].e = ExcitSynRevPot
+
+        fnmda[c] = new DCNsynNMDA(0.5)
+        fnmda[c].tauRise = tauRisefNMDA
+        fnmda[c].tauFall = tauFallfNMDA
+        fnmda[c].e = ExcitSynRevPot
+        fnmda[c].MgFactor = MgFactorfNMDA
+        fnmda[c].gamma = gammafNMDA
+
+        snmda[c] = new DCNsynNMDA(0.5)
+        snmda[c].tauRise = tauRisesNMDA
+        snmda[c].tauFall = tauFallsNMDA
+        snmda[c].e = ExcitSynRevPot
+        snmda[c].MgFactor = MgFactorsNMDA
+        snmda[c].gamma = gammasNMDA
+
+        c+=1
+    }
+} // end of proc insertSynapses()
+
+
+proc fixCaIons() {
+    // Set some specifications for the Ca and Cal ions. The following ion_style
+    // statements don't affect the behaviour of the model but compared to not giving
+    // them, speed up the simulation ca 5%, probably due to preventing eca from being
+    // calculated each dt. ion_style has to be set for each compartment where the Ca ion
+    // is used but gives no error when set for those compartments that don't use the ion.
+    forall {
+        ion_style("ca_ion", 2, 0, 0, 0, 1)
+    }
+    forall {
+        ion_style("cal_ion", 2, 0, 0, 0, 1)
+    }
+    // Set the extracellular calcium concentrations (mM):
+    cao0_ca_ion = 2
+    calo0_cal_ion = 2
+}
+
+DCNmechs()

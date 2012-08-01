@@ -1,0 +1,259 @@
+/*  Author: Johannes Luthman
+
+This is the simulation start file, with setting of run-specific variables.
+
+Hoc files called from here:
+- DCN_morph.hoc: creates the neuron morphology
+- DCN_mechs.hoc: adds ion channels and other biophysics
+- DCN_run.hoc: steps through the simulation
+- DCN_recording.hoc: contains procedures (called from DCN_run.hoc) for recording
+  and saving data.
+*/
+
+strdef strFilePrefix, strTemp
+
+// Set (optionally) prefix for the output file names. The following will be suffixed
+// automatically: compartment recorded from, number of seconds simulated, ".dat".
+strFilePrefix = ""
+
+randomiserSeed = 1
+
+runTime = 1000 // ms
+
+/* Set synaptic input rates (Hz). The default of the model is to receive
+40 Hz inhibitory and 20 Hz excitatory input.*/
+inhibitoryHz = 40
+excitatoryHz = 20
+
+// Set whether to record membrane potential and current traces, and if so, during
+// which intervals to record. (The somatic spike times are saved by default)
+// For each interval, give the number of milliseconds into the simulation to start
+// and stop the recording.
+// A non-instantiated vector error occurs if nExtraVars = 0, so to not record any
+// traces, set tTraceStop[0] = 0.
+nStepsSaveTrace = 1
+double tTraceStart[nStepsSaveTrace]
+double tTraceStop[nStepsSaveTrace]
+tTraceStart[0] = 200
+tTraceStop[0] = 500
+
+vInit = -70
+dt = 0.025
+secondorder = 1
+
+// Set the recording interval.
+recInterval = 0.100 // ms
+
+// Set the number of excitatory and inhibitory (Purkinje cell) synapses.
+EXCSOMASYNAPSES = 50
+EXCDENDSYNAPSES = 100
+EXCTOTALSYNAPSES = EXCSOMASYNAPSES + EXCDENDSYNAPSES
+INHSOMASYNAPSES = 50
+INHDENDSYNAPSES = 400
+INHTOTALSYNAPSES = INHSOMASYNAPSES + INHDENDSYNAPSES
+
+// Set convergence of Purkinje cells to the DCN.
+PCtoDCNconvergence = 450
+nDCNsynsPerPC = int(INHTOTALSYNAPSES / PCtoDCNconvergence)
+
+// Set parameters of the synaptic inputs.
+// If noise below is set to 0 (to get fully regular inputs), and the number of GABA inputs 
+// (PCtoDCNconvergence) is set to less than 450, then NEURON sometimes gives this error:
+// "internal error: Source delay is > NetCon delay"
+// The problem is corrected by setting noise to 1e-19 (1e-20 brings back the
+// error).
+noiseFractionExcSyn = 1 // max=1
+noiseFractionInhSyn = 1 // min=1e-19 if PCtoDCNconvergence<450 (see explanation above), max=1
+
+// Set the gamma distribution of the inputs.
+// The default value of 3 for gammaOrderPC is based on the values of 2.8 (for patterns)
+// and 3.4 (whole train) in Shin SL, Rotter S, Aertsen A, De Schutter E (2007)
+// Stochastic description of complex and simple spike firing in cerebellar Purkinje cells.
+// Eur J Neurosci 25:785-794.
+gammaOrderExc = 3
+gammaOrderPC = 3
+
+// refractory periods of the inputs (ms)
+refractoryPeriodExc = 1
+refractoryPeriodPC = 2
+
+// set useGABAsyndep to 1 (default) to use mech DCNsynGABA.mod, 0 to use DCNsyn.mod
+// to instantiate the GABA synapses, with the former giving short-term
+// depression as in Shin et al 2007 (PLOSone issue 5, e485)
+useGABAsyndep = 1
+
+// Define the length of the synaptic transmission delay (ms) in the PC-DCN synapse
+// and its jitter (standard deviation).
+gabaTransDelay = 2
+gabaTransDelaySD = 0
+
+// Set the temperature of the simulation. The model has been titrated to reproduce
+// in vivo like firing at celsius = 37.0 (default), while the original GENESIS
+// DCN model was constructed with temp = 32 deg celsius.
+celsius = 37.0
+TempOrigDCN = 32.0
+
+// Temperature adjustments
+
+// TempAnchisi = the temperature in the middle of the given range of room temperature
+// recording in Anchisi D, Scelfo B, Tempia F (2001) Postsynaptic currents in deep
+// cerebellar nuclei. J Neurophysiol 85:323-331.
+TempAnchisi = 24.0
+
+Q10channelGating = 3.0 // Middle of experimentally shown range (2-4) of ion channel gating, 
+        // see Hille 3rd ed (2001), p.51.
+Q10synapseGating = 2.0 // (Silver et al., 1996; Otis and Mody, 1992) Synaptic Q10s are given
+        // for GABA and excitatory synapses in Otis and Mody (1992), and Silver et al. (1996),
+        // respectively (full references below), with both giving Q10s in the region of 2.
+Q10conductances = 1.4 // The middle of the range (1.2-1.5) given in Hille 3rd ed (2001) 
+        // for ion channel conductances (p.51). Also, eg Milburn et al (1995) 
+        // Receptors Channels 3:201-211: “The conductance increases steeply with temperature,
+        // with Q10 ranging from 1.4 to 1.5”. However, also note Cao XJ, Oertel D (2005) 
+        // J Neurophysiol 94:821-832. They get the results that some conductances have a 
+        // Q10 of 2 while other channel conductances don’t change at all by changing 
+        // temp (Q10=1).
+Q10CaConc = 2.0 // Guesswork: I assume that calcium concentration changes due to a
+        // combination of diffusion (Q10 of ca 1.4) and pumping action (Q10 of enzymatic
+        // reactions = ca 3)
+
+QdTsynapseTausAnchisi = Q10synapseGating^((celsius - TempAnchisi) / 10.0)
+QdTconductanceAnchisi = Q10conductances^((celsius - TempAnchisi) / 10.0)
+QdTchannelGating = Q10channelGating^((celsius - TempOrigDCN) / 10.0)
+QdTsynapseTaus = Q10synapseGating^((celsius - TempOrigDCN) / 10.0)
+QdTconductances = Q10conductances^((celsius - TempOrigDCN) / 10.0)
+QdTCaConc = Q10CaConc^((celsius - TempOrigDCN) / 10.0)
+
+
+// Synaptic conductances
+
+gGABA = 1600e-6*QdTconductances
+tauRiseGABA = 0.25 / QdTsynapseTaus // From Dieter Jaeger's code cn6c_const_dj4.g
+tauFallGABA = 5.1 / QdTsynapseTaus // Telgkamp P, Padgett DE, Ledoux VA, Woolley CS, Raman IM (2004)
+        // Maintenance of high-frequency transmission at purkinje to cerebellar nuclear 
+        // synapses by spillover from boutons with multiple release sites. Neuron 41:113-126.
+
+// For the following excitatory synaptic conductances, I'm using the high input gain
+// level of Steuber, V., N. W. Schultheiss, et al. (2010). "Determinants of synaptic 
+// integration and heterogeneity in rebound firing explored with data-driven models of 
+// deep cerebellar nucleus cells." J Comput Neurosci.
+// [= AMPA 200 pS, NMDA peak conductance (fast + slow) 172 pS (114+57)]
+// The time constants are from Anchisi D, Scelfo B, Tempia F (2001) Postsynaptic currents
+// in deep cerebellar nuclei. J Neurophysiol 85:323-331.
+gAMPA = 200e-6*QdTconductanceAnchisi
+tauRiseAMPA = 0.5 / QdTsynapseTausAnchisi
+tauFallAMPA = 7.1 / QdTsynapseTausAnchisi
+gfNMDA = 114e-6*QdTconductanceAnchisi
+tauRisefNMDA = 5 / QdTsynapseTausAnchisi
+tauFallfNMDA = 20.2 / QdTsynapseTausAnchisi
+MgFactorfNMDA = 0.002
+gammafNMDA = 0.109
+gsNMDA = 57e-6*QdTconductanceAnchisi
+tauRisesNMDA = 5 / QdTsynapseTausAnchisi
+tauFallsNMDA = 136.4 / QdTsynapseTausAnchisi
+MgFactorsNMDA = 0.25
+gammasNMDA = 0.057
+
+// Passive electrical parameters.
+RA = 235.3 // ohm * cm
+CM = 1.57 // microfarad / cm2
+CMMYEL = CM/100
+PASSCOND = 2.81e-5*QdTconductances // S/cm2  passive conductance
+PASSCONDMYEL = PASSCOND / 2.81 // passive conductance of the axon
+SHELLTHICK = 0.2 // micrometers, the thickness of the calcium-containing shell 
+        // defined by CaConc.mod.
+
+// Reversal potentials in mV
+SodiumRevPot = 71
+PotassiumRevPot = -90
+GABARevPot = -75
+ExcitSynRevPot = 0
+hRevPot = -45
+TNCrevPot = -35
+
+
+// Non-synaptic channel conductances
+
+gNaFsoma = 2.5e-2*QdTconductances
+gNaFaxHill = 2*gNaFsoma
+gNaFaxIniSeg = 2*gNaFsoma
+gNaFpDend = 0.4*gNaFsoma
+gNaPsoma = 8e-4*QdTconductances
+
+gfKdrsoma = 1.5e-2*QdTconductances
+gfKdraxHill = 2*gfKdrsoma
+gfKdraxIniSeg = 2*gfKdrsoma
+gfKdrpDend = 0.6*gfKdrsoma
+
+gsKdrsoma = 1.25e-2*QdTconductances
+gsKdraxHill = 2*gsKdrsoma
+gsKdraxIniSeg = 2*gsKdrsoma
+gsKdrpDend = 0.6*gsKdrsoma
+
+gSKsoma = 2.2e-4*QdTconductances
+gSKpDend = 0.3*gSKsoma
+gSKdDend = 0.3*gSKsoma
+
+permCaLVAsoma = 1.77e-5*QdTconductances
+permCaLVAdend = 2*permCaLVAsoma
+
+permCaHVAsoma = 7.5e-6*QdTconductances
+permCaHVAdend = permCaHVAsoma / 1.5
+
+tauCaConcSoma = 70/QdTCaConc
+kCaCaConcSoma = 3.45e-7
+kCaCaConcDend = 1.04e-6
+
+gHsoma = 2e-4*QdTconductances
+gHpDend = 2*gHsoma
+gHdDend = 3*gHsoma
+
+gTNCsoma = 3e-5*QdTconductances
+gTNCaxHill = 3.5e-5*QdTconductances
+gTNCaxIniSeg = 3.5e-5*QdTconductances
+gTNCpDend = 0.2*gTNCsoma
+
+load_file("DCN_morph.hoc")
+load_file("DCN_mechs.hoc")
+load_file("DCN_run.hoc")
+
+//quit()
+
+     /* /////////////////////////////////////////////////////
+     ///                REFERENCES                        ///
+     ////////////////////////////////////////////////////////
+
+@@@ Excitatory inputs @@@
+(Gauck and Jaeger, 2003) say:
+"The mean activation rate of excitatory inputs was set to 20 Hz
+in accordance with in vivo recordings (Eccles et al., 1972; Cazin et al.,
+1980; van Kan et al., 1993; Gamlin and Clarke, 1995; Matsuzaki and
+Kyuhou, 1997). No difference between mossy and climbing fiber inputs
+has been described in the DCN, and we simulate only one homogenous
+group of excitatory inputs."
+
+@@@ Inhibitory inputs (from Purkinje cells) @@@
+(Savio and Tempia, 1985): spontaneous firing of single spikes = 36.15/s (± 17.04 SD)
+in awake rats. (wistar 180-240 grams, a size I believe corresponds to almost adult size
+(Stratton et al., 1988) gives a spontaneous simple spike firing rate of normal awake
+rats of 35 ± 5.1 spikes/sec, (with SE), and “average complex spike rate, 1.3 spikes/sec”. The age was P20-28.
+(LeDoux and Lorden, 2002) give a mean of ca 41 Hz SS frequency in 19.5±0.8 days old awake rats.
+
+Max PC firing rate: 260 Hz in axonal recordings:
+    Monsivais P, Clark BA, Roth A, Hausser M (2005) Determinants of action potential propagation
+    in cerebellar Purkinje cell axons. J Neurosci 25:464-472.
+
+@@@ Other references in the code @@@
+Gauck V, Jaeger D (2003) The contribution of NMDA and AMPA conductances to the control
+    of spiking in neurons of the deep cerebellar nuclei. J Neurosci 23:8109-8118.
+LeDoux MS, Lorden JF (2002) Abnormal spontaneous and harmaline-stimulated Purkinje cell
+    activity in the awake genetically dystonic rat. Exp Brain Res 145:457-467.
+Savio T, Tempia F (1985) On the Purkinje cell activity increase induced by suppression
+    of inferior olive activity. Exp Brain Res 57:456-463.
+Stratton SE, Lorden JF, Mays LE, Oltmans GA (1988) Spontaneous and harmaline-stimulated
+    Purkinje cell activity in rats with a genetic movement disorder. J Neurosci 8:3327-3336.
+Otis TS, Mody I (1992) Modulation of decay kinetics and frequency of GABAA
+    receptor-mediated spontaneous inhibitory postsynaptic currents in hippocampal
+    neurons. Neuroscience 49:13-32.
+Silver RA, Colquhoun D, Cull-Candy SG, Edmonds B (1996) Deactivation and
+    desensitization of non-NMDA receptors in patches and the time course of EPSCs
+    in rat cerebellar granule cells. J Physiol 493:167-173.

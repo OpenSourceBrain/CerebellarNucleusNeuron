@@ -1,0 +1,125 @@
+/* Author: Johannes Luthman
+
+Subroutines in this file:
+    InstantiateRecObjects()
+    SetupOutputFiles()
+    writeToTimeAndVoltVectors()
+    writeToTraceVectors()
+    writeSpikeTimesToFile()
+    writeTracesToFile()
+*/
+
+// Declare objects and strings used for recording and saving data.
+objref recT, recV, recTraceT, recTraceV
+objref vZerosAndOnes, vSpikeTimes
+objref recGgaba
+objref traceMatrix, fileTrace, fileSpikeTimes
+strdef strFileNameBase
+
+
+proc InstantiateRecObjects() {
+
+    recT = new Vector(nRecVectElements)
+    recV = new Vector(nRecVectElements)
+
+    // Create vectors to record traces.
+    if (tTraceStop[0] > 0) {
+        recTraceT = new Vector(sizeVectorOfTrace)
+        recTraceV = new Vector(sizeVectorOfTrace)
+        recGgaba = new Vector(sizeVectorOfTrace)
+    }
+}
+
+proc SetupOutputFiles() {
+
+    if (strcmp(strFilePrefix, "") == 0) {
+        strFilePrefix = "OutputDCN"
+    }
+    sprint(strFileNameBase, "%s_soma_%gs", strFilePrefix, int(0.5 + (runTime/1000)))
+
+    fileSpikeTimes = new File()
+    sprint(strTemp, "%s_ap.dat", strFileNameBase) //"ap" = action potential
+    printf("starting simulation with output name %s\n", strTemp)
+    fileSpikeTimes.wopen(strTemp)
+}
+
+proc writeToTimeAndVoltVectors() {
+    recT.x[iRecTimeVolt] = t
+    recV.x[iRecTimeVolt] = soma.v(0.5)
+}
+
+proc writeToTraceVectors() { local subC, subSumGABAg, subSumGABAi, subSumExci
+    
+    recTraceT.x[iRecTrace] = t
+    recTraceV.x[iRecTrace] = soma.v(0.5)
+
+    // Record gaba conductance mean of all synapses.
+    subSumGABAg=0
+    for (subC=0; subC < INHTOTALSYNAPSES; subC=subC+1) {
+        subSumGABAg = subSumGABAg + gaba[subC].g
+    }
+    recGgaba.x[iRecTrace] = subSumGABAg / INHTOTALSYNAPSES
+}
+
+proc writeSpikeTimesToFile() { local subC, subnIndeces, subnSpikes
+
+    vZerosAndOnes = new Vector()
+    vZerosAndOnes.spikebin(recV,-20) //feeding recV to spikebin gives vZerosAndOnes the same size as recV.
+            // Some spikes reach just around 0 when excitatory synaptic input rates are high;
+            // since not each dt is recorded, it's necessary to set the threshold to lower
+            // than 0 to catch those spikes.
+
+    // Run through the spike vector, containing 0s and 1s. For each 1, save
+    // the corresponding time from recT to the new vector vSpikeTimes.
+    subnIndeces = vZerosAndOnes.size()
+    subnSpikes = 0
+    vSpikeTimes = new Vector(subnIndeces)
+    for(subC = 0; subC < subnIndeces; subC+=1) {
+        if (vZerosAndOnes.x[subC] > 0.000001) {
+            vSpikeTimes.x[subnSpikes] = recT.x[subC]
+            subnSpikes+=1
+        }
+    }
+    //Remove trailing zeroes from spike vector.
+    if (subnSpikes > 0.0000001) {
+        vSpikeTimes.resize(subnSpikes-1)
+        vSpikeTimes.printf(fileSpikeTimes, "%g\n")
+        fileSpikeTimes.flush()
+    }
+    if (t>=runTime) {
+        fileSpikeTimes.close()
+    }
+} // end of writeSpikeTimesToFile()
+
+proc writeTracesToFile() { local subC
+
+    // Before saving, determine number of non-zero entries of the vectors.
+    // (some extra lines may have been added)
+    subC = sizeVectorOfTrace-1
+    while (recTraceT.x[subC] < 0.0000001) {
+        subC = subC-1
+    }
+
+    // First save time. (time is saved separately to save space,
+    // due to its different requirement for the number of decimals)
+    sprint(strTemp, "%s_time.dat", strFileNameBase)
+    fileTrace = new File()
+    fileTrace.wopen(strTemp)
+    recTraceT.resize(subC + 1)
+    recTraceT.printf(fileTrace, "%g\n")
+    fileTrace.close()
+
+    // Work on the traces. First instantiate a matrix to use for saving the data.
+    traceMatrix = new Matrix(subC + 1, 2)
+    recTraceV.resize(subC + 1)
+    traceMatrix.setcol(0, recTraceV)
+    recGgaba.resize(subC + 1)
+    traceMatrix.setcol(1, recGgaba)
+
+    // Create a file to contain the traces.
+    sprint(strTemp, "%s_trace.dat", strFileNameBase)
+    fileTrace = new File()
+    fileTrace.wopen(strTemp)
+    traceMatrix.fprint(0, fileTrace, "%.2e\t")
+    fileTrace.close()
+}
