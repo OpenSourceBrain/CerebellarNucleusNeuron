@@ -1,3 +1,8 @@
+// OSB: These scripts were retrieved from ModelDB: 
+// http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model=136175
+// NOTE: the version of the model in the GENESIS directory is not identical 
+// to that in the NEURON directory
+
 README for the cerebellar nucleus neuron model described in the paper:
 
 Volker Steuber, Nathan Schultheiss, R. Angus Silver, Erik De Schutter
