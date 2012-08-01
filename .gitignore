@@ -1,4 +1,4 @@
-
+NEURON/*.dat
 cn*.dat
 *.pyc
 *i686
