@@ -1,3 +1,4 @@
+NEURON/*/*.dat
 NEURON/*.dat
 cn*.dat
 *.pyc
