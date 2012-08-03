@@ -23,10 +23,12 @@
     <ionChannel id="CaLVA" conductance="10pS" type="ionChannelHH" species="ca">
         <notes>A High Voltage Activated Ca2+ channel</notes>
         <gateHH id="m" instances="2">
-            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="17.350264793 degC" celsius="32.0 degC"/>
+            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC" celsius="37 degC"/>
             <notes>Note: offset from ChannelML file incorporated into midpoint of rates!!</notes>
-            <forwardRate type="HHSigmoidRate" rate="1600per_s" scale="0.01388888889V" midpoint="0.015V"/>
-            <reverseRate type="HHExpLinearRate" rate="100per_s" scale="-0.005V" midpoint="0.0011000000000000003V"/>
+
+            <timeCourse type="CaLVA_m_tau"/>
+
+            <steadyState type="HHSigmoidVariable" rate="1" scale="6.2 mV" midpoint="-56 mV"/>
         </gateHH>
         <gateHH id="h" instances="1">
             <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="17.350264793 degC" celsius="32.0 degC"/>
@@ -35,6 +37,17 @@
             <reverseRate type="CaLVA_h_beta_rate"/>
         </gateHH>
     </ionChannel>
+
+
+    <ComponentType name="CaLVA_m_tau" extends="baseVoltageDepTime">
+        <Constant name="TIME_SCALE" dimension="time" value="1 ms"/>
+        <Constant name="VOLT_SCALE" dimension="voltage" value="1 mV"/>
+        <Behavior>
+            <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
+            <DerivedVariable name="t" exposure="t" dimension="time" value="(0.333 / (exp((V + 131) / (-16.7)) + exp((V + 15.8) / 18.2)) + 0.204) * TIME_SCALE"/>
+        </Behavior>
+    </ComponentType>
+
 
     <ComponentType name="CaLVA_h_alpha_rate" extends="baseVoltageDepRate">
         <Constant name="TIME_SCALE" dimension="time" value="1 s"/>

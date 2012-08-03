@@ -132,11 +132,18 @@ v_time = new Vector()
 f_time = new File()
 
 
-objref v_Soma
+objref v_Soma, f_Soma
 { v_Soma = new Vector() }
 { v_Soma.record(&soma.v(0.5))}
 
-objref f_Soma
+objref v_Soma_m, f_Soma_m
+{ v_Soma_m = new Vector() }
+{ v_Soma_m.record(&soma.m_CaLVA(0.5))}
+
+objref v_Soma_h, f_Soma_h
+{ v_Soma_h = new Vector() }
+{ v_Soma_h.record(&soma.h_CaLVA(0.5))}
+
 
 
 print "Starting simulation of duration ",tstop,"ms"
@@ -151,3 +158,17 @@ filename = "GHK_Soma.dat"
 f_Soma.wopen(filename)
 v_Soma.printf(f_Soma)
 f_Soma.close()
+
+f_Soma_m = new File()
+strdef filename_m
+filename_m = "GHK_Soma_m.dat"
+f_Soma_m.wopen(filename_m)
+v_Soma_m.printf(f_Soma_m)
+f_Soma_m.close()
+
+f_Soma_h = new File()
+strdef filename_h
+filename_h = "GHK_Soma_h.dat"
+f_Soma_h.wopen(filename_h)
+v_Soma_h.printf(f_Soma_h)
+f_Soma_h.close()
