@@ -72,6 +72,7 @@ soma {
 
         insert CaLVA
         perm_CaLVA = permCaLVAsoma
+        perm_CaLVA = 0
         qdeltat_CaLVA = QdTchannelGating
 }
 
@@ -89,8 +90,8 @@ objectvar stim0
 
 
 tstop = 300.0
-dt = 0.025
-steps_per_ms = 40.0
+dt = 0.01
+steps_per_ms = 100
 
 
 objref Soma_CML_v
@@ -128,22 +129,18 @@ objref propsFile
 
 v_time = new Vector()
 { v_time.record(&t) }
-{ v_time.resize(200001) }
 f_time = new File()
 
 
 objref v_Soma
 { v_Soma = new Vector() }
 { v_Soma.record(&soma.v(0.5))}
-{ v_Soma.resize(200001) }
 
 objref f_Soma
 
 
 print "Starting simulation of duration ",tstop,"ms"
 
-{cvode.active(1)}
-{cvode.atol(1.0E-5)}
 {run()}
 
 print "Finished simulation"
