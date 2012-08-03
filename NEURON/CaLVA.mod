@@ -12,7 +12,7 @@ ENDCOMMENT
 NEURON { 
 	SUFFIX CaLVA 
 	USEION cal READ cali, calo WRITE ical VALENCE 2
-	RANGE perm, ical, m, h, cali
+	RANGE perm, ical, m, h, cali, taum, tauh
 	GLOBAL qdeltat
 } 
  

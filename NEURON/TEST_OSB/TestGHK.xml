@@ -24,17 +24,17 @@
         <notes>A High Voltage Activated Ca2+ channel</notes>
         <gateHH id="m" instances="2">
             <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC" celsius="37 degC"/>
-            <notes>Note: offset from ChannelML file incorporated into midpoint of rates!!</notes>
 
             <timeCourse type="CaLVA_m_tau"/>
-
             <steadyState type="HHSigmoidVariable" rate="1" scale="6.2 mV" midpoint="-56 mV"/>
+            
         </gateHH>
         <gateHH id="h" instances="1">
-            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="17.350264793 degC" celsius="32.0 degC"/>
-            <notes>Note: offset from ChannelML file incorporated into midpoint of rates!!</notes>
-            <forwardRate type="CaLVA_h_alpha_rate"/>
-            <reverseRate type="CaLVA_h_beta_rate"/>
+            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC" celsius="37 degC"/>
+
+            <timeCourse type="CaLVA_h_tau"/>
+            <steadyState type="HHSigmoidVariable" rate="1" scale="-4 mV" midpoint="-80 mV"/>
+
         </gateHH>
     </ionChannel>
 
@@ -49,25 +49,15 @@
     </ComponentType>
 
 
-    <ComponentType name="CaLVA_h_alpha_rate" extends="baseVoltageDepRate">
-        <Constant name="TIME_SCALE" dimension="time" value="1 s"/>
-        <Constant name="VOLT_SCALE" dimension="voltage" value="1 V"/>
-        <Constant name="offset" dimension="voltage" value="0.010V"/>
+    <ComponentType name="CaLVA_h_tau" extends="baseVoltageDepTime">
+        <Constant name="TIME_SCALE" dimension="time" value="1 ms"/>
+        <Constant name="VOLT_SCALE" dimension="voltage" value="1 mV"/>
         <Behavior>
-            <DerivedVariable name="V" dimension="none" value="(v - offset) / VOLT_SCALE"/>
-            <DerivedVariable name="r" exposure="r" dimension="per_time" value="( 5.0 ) / TIME_SCALE" valueCondition="V   .lt. ( -0.060 )" valueIfFalse="( 5 * (exp (-50 * (V - (-0.060))))) / TIME_SCALE"/>
+            <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
+            <DerivedVariable name="t" exposure="t" dimension="time" value="(0.333 * exp((V + 466) / 66)) * TIME_SCALE" valueCondition="V  .lt. ( -81 )" valueIfFalse="(0.333 * exp((V + 21) / (-10.5)) + 9.32) * TIME_SCALE"/>
         </Behavior>
     </ComponentType>
 
-    <ComponentType name="CaLVA_h_beta_rate" extends="baseVoltageDepRate">
-        <Constant name="TIME_SCALE" dimension="time" value="1 s"/>
-        <Constant name="VOLT_SCALE" dimension="voltage" value="1 V"/>
-        <Constant name="offset" dimension="voltage" value="0.010V"/>
-        <Behavior>
-            <DerivedVariable name="V" dimension="none" value="(v - offset) / VOLT_SCALE"/>
-            <DerivedVariable name="r" exposure="r" dimension="per_time" value="( 0 ) / TIME_SCALE" valueCondition="V   .lt. ( -0.060 )" valueIfFalse="( 5 - (5 * (exp (-50 * (V - (-0.060)))))) / TIME_SCALE"/>
-        </Behavior>
-    </ComponentType>
 
 
 
@@ -113,7 +103,7 @@
 
                 <specificCapacitance value="1.57 uF_per_cm2"/>
 
-                <initMembPotential value="-65.0 mV"/>
+                <initMembPotential value="-66.0 mV"/>
 
             </membraneProperties>
 
@@ -137,7 +127,7 @@
     </cell>
 
 
-    <pulseGenerator id="pulseGen1" delay="100ms" duration="100ms" amplitude="0.02 nA" />
+    <pulseGenerator id="pulseGen1" delay="100ms" duration="100ms" amplitude="-0.01 nA" />
 
     <voltageClamp id="vClamp1" delay="150ms" duration="50ms" targetVoltage="10mV" seriesResistance="1ohm"/>
 
@@ -150,7 +140,7 @@
         <!-- End of NeuroML2 content -->
 
 
-    <Simulation id="sim1" length="300ms" step="0.01ms" target="net1">
+    <Simulation id="sim1" length="400ms" step="0.01ms" target="net1">
 
         <Display id="d1" title="GHK Test: Voltage (mV)" timeScale="1ms">
             <Line id="l1" quantity="hhpop[0]/v" scale="1mV"  color="#ffffff" save="NML2_LEMS_v.dat"/>
@@ -175,6 +165,11 @@
         <Display id="d4" title="GHK Test: current totals" timeScale="1ms">
             <Line id="l0" quantity="hhpop[0]/pulseGen1/i" scale="1nA"  color="#dddddd" save="NML2_LEMS_naigc.dat"/>
             <Line id="l2" quantity="hhpop[0]/iCa" scale="1nA"  color="#00aa00" save="NML2_LEMS_naic2.dat"/>
+        </Display>
+
+        <Display id="d5" title="GHK Test: taus" timeScale="1ms">
+            <Line id="l01" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/m/tau" scale="1ms"  color="#ddd222" save="NML2_LEMS_mtau.dat"/>
+            <Line id="l02" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/h/tau" scale="1ms"  color="#555222" save="NML2_LEMS_htau.dat"/>
         </Display>
 
 
