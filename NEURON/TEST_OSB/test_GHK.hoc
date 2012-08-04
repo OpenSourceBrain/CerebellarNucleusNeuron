@@ -72,8 +72,10 @@ soma {
 
         insert CaLVA
         perm_CaLVA = permCaLVAsoma
-        perm_CaLVA = 0
         qdeltat_CaLVA = QdTchannelGating
+
+        cali = 50e-6
+        calo = 2
 }
 
 access soma
@@ -154,6 +156,10 @@ objref v_Soma_h, f_Soma_h
 { v_Soma_h = new Vector() }
 { v_Soma_h.record(&soma.h_CaLVA(0.5))}
 
+objref v_Soma_i, f_Soma_i
+{ v_Soma_i = new Vector() }
+{ v_Soma_i.record(&soma.ical_CaLVA(0.5))}
+
 
 
 print "Starting simulation of duration ",tstop,"ms"
@@ -183,3 +189,10 @@ filename_h = "GHK_Soma_h.dat"
 f_Soma_h.wopen(filename_h)
 v_Soma_h.printf(f_Soma_h)
 f_Soma_h.close()
+
+f_Soma_i = new File()
+strdef filename_i
+filename_i = "GHK_Soma_i.dat"
+f_Soma_i.wopen(filename_i)
+v_Soma_i.printf(f_Soma_i)
+f_Soma_i.close()

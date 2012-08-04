@@ -96,7 +96,7 @@
 
                 <channelDensity condDensity="3.32484e-05 S_per_cm2" id="Pas_all" ionChannel="Pas" erev="-66.0 mV" ion="non_specific"/>
 
-                <channelDensity condDensity="0 mS_per_cm2" id="CaLVA_all" ionChannel="CaLVA" erev="80.0 mV" ion="ca"/>
+                <channelDensityGHK condDensity="0.1 mS_per_cm2" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>
 
 
                 <spikeThresh value="0 mV"/>
@@ -114,7 +114,7 @@
                                          restingConc="7.55E-11 mol_per_cm3"
                                          decayConstant="10.0 ms"
                                          shellThickness="8.4E-6 cm"
-                                         initialConcentration="7.55E-5 mM"
+                                         initialConcentration="50e-6 mM"
                                          initialExtConcentration="2 mM"/>
                 </species>
 
@@ -144,6 +144,7 @@
 
         <Display id="d1" title="GHK Test: Voltage (mV)" timeScale="1ms">
             <Line id="l1" quantity="hhpop[0]/v" scale="1mV"  color="#ffffff" save="NML2_LEMS_v.dat"/>
+            <Line id="l5" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/erev" scale="1uA_per_cm2"  color="#00ff00" save="NML2_LEMS_cae.dat"/>
         </Display>
 
         <Display id="d2" title="GHK Test: rate variables" timeScale="1ms">
@@ -166,11 +167,11 @@
             <Line id="l0" quantity="hhpop[0]/pulseGen1/i" scale="1nA"  color="#dddddd" save="NML2_LEMS_naigc.dat"/>
             <Line id="l2" quantity="hhpop[0]/iCa" scale="1nA"  color="#00aa00" save="NML2_LEMS_naic2.dat"/>
         </Display>
-
+<!--
         <Display id="d5" title="GHK Test: taus" timeScale="1ms">
             <Line id="l01" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/m/tau" scale="1ms"  color="#ddd222" save="NML2_LEMS_mtau.dat"/>
             <Line id="l02" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/h/tau" scale="1ms"  color="#555222" save="NML2_LEMS_htau.dat"/>
-        </Display>
+        </Display>-->
 
 
     </Simulation>
