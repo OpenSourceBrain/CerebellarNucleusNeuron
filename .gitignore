@@ -1,3 +1,4 @@
+umac
 NEURON/*/*.dat
 NEURON/*.dat
 cn*.dat
