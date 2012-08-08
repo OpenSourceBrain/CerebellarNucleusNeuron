@@ -99,7 +99,7 @@
 
                 <channelDensity condDensity="3.32484e-05 S_per_cm2" id="Pas_all" ionChannel="Pas" erev="-66.0 mV" ion="non_specific"/>
 
-                <channelDensityGHK condDensity="0.1 mS_per_cm2" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>
+                <channelDensityGHK permeability="1.77e-5 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>
 
 
                 <spikeThresh value="0 mV"/>

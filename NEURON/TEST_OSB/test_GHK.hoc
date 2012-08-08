@@ -84,13 +84,22 @@ objectvar stim0
 
 
 {
-    stim0 = new IClamp(0.5) 
+    stim0 = new IClamp(0.5)
     stim0.del = 100.0
     stim0.dur = 100.0
     stim0.amp = -0.01
 }
+objectvar stim1
 
-tstop = 400.0
+
+{
+    stim1 = new IClamp(0.5)
+    stim1.del = 500.0
+    stim1.dur = 100.0
+    stim1.amp = 0.01
+}
+
+tstop = 800.0
 dt = 0.01
 steps_per_ms = 100
 
