@@ -9,12 +9,12 @@
 
         <gate id="m" type="gateHH" instances="3">
             <timeCourse type="NaF_m_tau_tau"/>
-            <steadyState type="HHSigmoidVariable" rate="1" scale="0.007324V" midpoint="-0.045V"/>
+            <steadyState type="HHSigmoidVariable" rate="1" scale="7.3 mV" midpoint="-45 mV"/>
         </gate>
 
         <gate id="h" type="gateHH" instances="1">
             <timeCourse type="NaF_h_tau_tau"/>
-            <steadyState type="HHSigmoidVariable" rate="1" scale="-0.0059V" midpoint="-0.042V"/>
+            <steadyState type="HHSigmoidVariable" rate="1" scale="-5.9 mV" midpoint="-42 mV"/>
         </gate>
                             
     </ionChannel>
@@ -25,7 +25,7 @@
 
         <Behavior>
             <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
-            <DerivedVariable name="t" exposure="t" dimension="time" value="(5.833e-3/((exp ((V - 0.0064)/ (-0.009))) + (exp ((V + 0.097)/0.017))) + 2.5e-5) * TIME_SCALE"/>
+            <DerivedVariable name="t" exposure="t" dimension="time" value="(5.83e-3/((exp ((V - 0.0064)/ (-0.009))) + (exp ((V + 0.097)/0.017))) + 2.5e-5) * TIME_SCALE"/>
         </Behavior>
 
     </ComponentType>

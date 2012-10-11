@@ -70,13 +70,13 @@ soma {
         /* - */
         insert CaLVA
         perm_CaLVA = 0*permCaLVAsoma
-        qdeltat_CaLVA = QdTchannelGating
+        qdeltat_CaLVA = 1 // QdTchannelGating
 
         cali = 50e-6
         calo = 2
 
         insert NaF
-        gbar_NaF = 0*0.00295804
+        gbar_NaF = 0.00  //  (siemens/cm2)
         ena = 71
 
 }
