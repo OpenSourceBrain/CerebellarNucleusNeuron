@@ -25,7 +25,7 @@
     <voltageClamp id="vClamp1" delay="150ms" duration="50ms" targetVoltage="10mV" seriesResistance="1ohm"/>
 
     <network id="net1">
-        <extracellularProperties temperature="32degC"/>
+        <extracellularProperties temperature="37degC"/>
         <population id="hhpop" component="SomaGHK" size="1"/>
         <explicitInput target="hhpop[0]" input="pulseGen1"/>
         <explicitInput target="hhpop[0]" input="pulseGen2"/>
@@ -35,7 +35,7 @@
         <!-- End of NeuroML2 content -->
 
 
-    <Simulation id="sim1" length="800ms" step="0.05ms" target="net1">
+    <Simulation id="sim1" length="800ms" step="0.01ms" target="net1">
 
         <Display id="d1" title="GHK Test: Voltage (mV)" timeScale="1ms">
             <Line id="l1" quantity="hhpop[0]/v" scale="1mV"  color="#ffffff" save="NML2_LEMS_v.dat"/>
