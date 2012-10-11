@@ -3,8 +3,6 @@ load_file("nrngui.hoc")
 
 
 
-{celsius = 37.0}
-
 create soma
 
 soma {pt3dclear() pt3dadd(0, 0, 0, 14.398) pt3dadd(32.3955, 0, 0, 14.398)}
@@ -18,7 +16,7 @@ PotassiumRevPot = -90
 // Set the temperature of the simulation. The model has been titrated to reproduce
 // in vivo like firing at celsius = 37.0 (default), while the original GENESIS
 // DCN model was constructed with temp = 32 deg celsius.
-celsius = 37
+celsius = 32
 TempOrigDCN = 32.0
 
 // Temperature adjustments
@@ -69,13 +67,18 @@ soma {
 
         //ena = SodiumRevPot
         //ek = PotassiumRevPot
-
+        /* - */
         insert CaLVA
-        perm_CaLVA = permCaLVAsoma
+        perm_CaLVA = 0*permCaLVAsoma
         qdeltat_CaLVA = QdTchannelGating
 
         cali = 50e-6
         calo = 2
+
+        insert NaF
+        gbar_NaF = 0*0.00295804
+        ena = 71
+
 }
 
 access soma
@@ -119,6 +122,7 @@ Soma_CML_ical = new Graph(0)
 {Soma_CML_ical.view(0, -6e-5, tstop, 6e-5, 400, 130, 330, 250)}
 {
     Soma_CML_ical.addexpr("soma.ical_CaLVA", "soma.ical_CaLVA(0.5)", 1, 1, 0.8, 0.9, 2)
+    Soma_CML_ical.addexpr("soma.ina_NaF", "soma.ina_NaF(0.5)", 2, 1, 0.8, 0.9, 2)
     graphList[0].append(Soma_CML_ical)
 }
 
@@ -130,9 +134,11 @@ Soma_CML_mh = new Graph(0)
 {
     Soma_CML_mh.addexpr("soma.m_CaLVA", "soma.m_CaLVA(0.5)", 1, 1, 0.8, 0.9, 2)
     Soma_CML_mh.addexpr("soma.h_CaLVA", "soma.h_CaLVA(0.5)", 2, 1, 0.8, 0.9, 2)
+    Soma_CML_mh.addexpr("soma.m_NaF", "soma.m_NaF(0.5)", 3, 1, 0.8, 0.9, 2)
+    Soma_CML_mh.addexpr("soma.h_NaF", "soma.h_NaF(0.5)", 4, 1, 0.8, 0.9, 2)
     graphList[0].append(Soma_CML_mh)
 }
-
+/* - */
 objref Soma_CML_tau
 Soma_CML_tau = new Graph(0)
 {Soma_CML_tau.size(0, tstop,0,1)}
@@ -156,7 +162,7 @@ f_time = new File()
 objref v_Soma, f_Soma
 { v_Soma = new Vector() }
 { v_Soma.record(&soma.v(0.5))}
-
+/* - */
 objref v_Soma_m, f_Soma_m
 { v_Soma_m = new Vector() }
 { v_Soma_m.record(&soma.m_CaLVA(0.5))}
@@ -165,9 +171,21 @@ objref v_Soma_h, f_Soma_h
 { v_Soma_h = new Vector() }
 { v_Soma_h.record(&soma.h_CaLVA(0.5))}
 
-objref v_Soma_i, f_Soma_i
-{ v_Soma_i = new Vector() }
-{ v_Soma_i.record(&soma.ical_CaLVA(0.5))}
+objref v_Soma_ica, f_Soma_ica
+{ v_Soma_ica = new Vector() }
+{ v_Soma_ica.record(&soma.ical_CaLVA(0.5))}
+
+objref v_Soma_mn, f_Soma_mn
+{ v_Soma_mn = new Vector() }
+{ v_Soma_mn.record(&soma.m_NaF(0.5))}
+
+objref v_Soma_hn, f_Soma_hn
+{ v_Soma_hn = new Vector() }
+{ v_Soma_hn.record(&soma.h_NaF(0.5))}
+
+objref v_Soma_ina, f_Soma_ina
+{ v_Soma_ina = new Vector() }
+{ v_Soma_ina.record(&soma.ina_NaF(0.5))}
 
 
 
@@ -182,26 +200,66 @@ f_Soma = new File()
 strdef filename
 filename = "GHK_Soma.dat"
 f_Soma.wopen(filename)
-v_Soma.printf(f_Soma)
+for i=0, v_Soma.size()-1 {
+    f_Soma.printf("%g\t%e\n", (i*dt), v_Soma.get(i))
+}
 f_Soma.close()
 
+/**/
 f_Soma_m = new File()
 strdef filename_m
 filename_m = "GHK_Soma_m.dat"
 f_Soma_m.wopen(filename_m)
-v_Soma_m.printf(f_Soma_m)
+for i=0, v_Soma_m.size()-1 {
+    f_Soma_m.printf("%g\t%e\n", (i*dt), v_Soma_m.get(i))
+}
 f_Soma_m.close()
 
 f_Soma_h = new File()
 strdef filename_h
 filename_h = "GHK_Soma_h.dat"
 f_Soma_h.wopen(filename_h)
-v_Soma_h.printf(f_Soma_h)
+for i=0, v_Soma_h.size()-1 {
+    f_Soma_h.printf("%g\t%e\n", (i*dt), v_Soma_h.get(i))
+}
 f_Soma_h.close()
 
-f_Soma_i = new File()
-strdef filename_i
-filename_i = "GHK_Soma_i.dat"
-f_Soma_i.wopen(filename_i)
-v_Soma_i.printf(f_Soma_i)
-f_Soma_i.close()
+f_Soma_ica = new File()
+strdef filename_ica
+filename_ica = "GHK_Soma_ica.dat"
+f_Soma_ica.wopen(filename_ica)
+for i=0, v_Soma_ica.size()-1 {
+    f_Soma_ica.printf("%g\t%e\n", (i*dt), -1*v_Soma_ica.get(i))
+}
+f_Soma_ica.close()
+
+
+
+f_Soma_mn = new File()
+strdef filename_mn
+filename_mn = "GHK_Soma_mn.dat"
+f_Soma_mn.wopen(filename_mn)
+for i=0, v_Soma_mn.size()-1 {
+    f_Soma_mn.printf("%g\t%e\n", (i*dt), v_Soma_mn.get(i))
+}
+f_Soma_mn.close()
+
+f_Soma_hn = new File()
+strdef filename_hn
+filename_hn = "GHK_Soma_hn.dat"
+f_Soma_hn.wopen(filename_hn)
+for i=0, v_Soma_hn.size()-1 {
+    f_Soma_hn.printf("%g\t%e\n", (i*dt), v_Soma_hn.get(i))
+}
+f_Soma_hn.close()
+
+
+
+f_Soma_ina = new File()
+strdef filename_ina
+filename_ina = "GHK_Soma_ina.dat"
+f_Soma_ina.wopen(filename_ina)
+for i=0, v_Soma_ina.size()-1 {
+    f_Soma_ina.printf("%g\t%e\n", (i*dt), -1*v_Soma_ina.get(i))
+}
+f_Soma_ina.close()

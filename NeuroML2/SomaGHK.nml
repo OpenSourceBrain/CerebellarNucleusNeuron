@@ -2,8 +2,7 @@
 <neuroml xmlns="http://www.neuroml.org/schema/neuroml2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd"
-    id="KDr">
-
+    id="SomaGHK">
 
     <cell id="SomaGHK">
 
@@ -34,11 +33,12 @@
 
             <membraneProperties>
 
-
-                <channelDensity condDensity="3.32484e-05 S_per_cm2" id="Pas_all" ionChannel="Pas" erev="-66.0 mV" ion="non_specific"/>
-
-                <!--<channelDensityGHK permeability="1.77e-15 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>-->
+                <channelDensity condDensity="2.81e-05 S_per_cm2" id="Pas_all" ionChannel="Pas" erev="-66.0 mV" ion="non_specific"/>
+<!--0.00000295804-->
+                <channelDensity condDensity="0.000 S_per_cm2" id="NaF_all" ionChannel="NaF" erev="71 mV"  ion="na"/> 
                 <channelDensity condDensity="0 S_per_cm2" id="CaLVA_all" ionChannel="CaLVA" erev="66.0 mV"  ion="ca"/>
+                <!--
+                <channelDensityGHK permeability="1.77e-5 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>-->
 
 
                 <spikeThresh value="0 mV"/>
