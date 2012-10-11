@@ -1,6 +1,7 @@
 umac
 NEURON/*/*.dat
 NEURON/*.dat
+NeuroML2/*.dat
 cn*.dat
 *.pyc
 *i686
