@@ -69,7 +69,7 @@ soma {
         //ek = PotassiumRevPot
         /* - */
         insert CaLVA
-        perm_CaLVA = 0*permCaLVAsoma
+        perm_CaLVA = 1e-5 //permCaLVAsoma // (cm/seconds)
         qdeltat_CaLVA = 1 // QdTchannelGating
 
         cali = 50e-6
@@ -191,7 +191,7 @@ objref v_Soma_ina, f_Soma_ina
 
 print "Starting simulation of duration ",tstop,"ms"
 
-{v_init = -66}
+{v_init = -65.43}
 {run()}
 
 print "Finished simulation"

@@ -36,15 +36,15 @@
                 <channelDensity condDensity="2.81e-05 S_per_cm2" id="Pas_all" ionChannel="Pas" erev="-66.0 mV" ion="non_specific"/>
 <!--0.00000295804-->
                 <channelDensity condDensity="0.00 S_per_cm2" id="NaF_all" ionChannel="NaF" erev="71 mV"  ion="na"/>
-                <channelDensity condDensity="0 S_per_cm2" id="CaLVA_all" ionChannel="CaLVA" erev="66.0 mV"  ion="ca"/>
-                <!--
-                <channelDensityGHK permeability="1.77e-5 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>-->
+                  <!--<channelDensity condDensity="0 S_per_cm2" id="CaLVA_all" ionChannel="CaLVA" erev="66.0 mV"  ion="ca"/>-->
+              
+                <channelDensityGHK permeability="1e-5 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>
 
                 <spikeThresh value="0 mV"/>
 
                 <specificCapacitance value="1.57 uF_per_cm2"/>
 
-                <initMembPotential value="-66.0 mV"/>
+                <initMembPotential value="-65.43 mV"/>
 
             </membraneProperties>
 
