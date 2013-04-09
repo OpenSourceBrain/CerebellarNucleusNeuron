@@ -6759,29 +6759,6 @@
             
         </morphology>
 
-            <!--Adding the biophysical parameters-->
-
-        <biophysicalProperties id="biophys">
-
-            <membraneProperties>
-
-                <channelDensity condDensity="0.02812149 mS_per_cm2" id="pas_all" ionChannel="pas" ion="non_specific" erev="-66.0 mV"/>
-
-                <spikeThresh value="0 mV"/>
-
-                <specificCapacitance value="1.57 uF_per_cm2"/>
-
-                <initMembPotential value="-60.0 mV"/>
-
-            </membraneProperties>
-
-            <intracellularProperties>
-
-                <resistivity value="0.3 kohm_cm"/>
-
-            </intracellularProperties>
-
-        </biophysicalProperties>
 
     </cell>
     
