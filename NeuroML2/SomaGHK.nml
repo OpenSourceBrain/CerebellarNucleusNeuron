@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <neuroml xmlns="http://www.neuroml.org/schema/neuroml2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd"
+    xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd"
     id="SomaGHK">
 
     <cell id="SomaGHK">
@@ -36,9 +36,10 @@
                 <channelDensity condDensity="2.81e-05 S_per_cm2" id="Pas_all" ionChannel="Pas" erev="-66.0 mV" ion="non_specific"/>
 <!--0.00000295804-->
                 <channelDensity condDensity="0.00 S_per_cm2" id="NaF_all" ionChannel="NaF" erev="71 mV"  ion="na"/>
-                  <!--<channelDensity condDensity="0 S_per_cm2" id="CaLVA_all" ionChannel="CaLVA" erev="66.0 mV"  ion="ca"/>-->
+
+                <channelDensity condDensity="0 S_per_cm2" id="CaLVA_all" ionChannel="CaLVA" erev="66.0 mV"  ion="ca"/>
               
-                <channelDensityGHK permeability="1e-5 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>
+                <!--<channelDensityGHK permeability="1e-5 cm_per_s" id="CaLVA_all" ionChannel="CaLVA"  ion="ca"/>-->
 
                 <spikeThresh value="0 mV"/>
 

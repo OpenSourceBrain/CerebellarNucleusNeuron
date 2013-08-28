@@ -5,12 +5,12 @@
 
 
 <!-- Specify which component to run -->
-    <DefaultRun component="sim1"/>
+    <Target component="sim1"/>
 
 <!-- Include core NeuroML2 ComponentType definitions -->
-    <Include file="NeuroML2CoreTypes/Cells.xml"/>
-    <Include file="NeuroML2CoreTypes/Networks.xml"/>
-    <Include file="NeuroML2CoreTypes/Simulation.xml"/>
+    <Include file="Cells.xml"/>
+    <Include file="Networks.xml"/>
+    <Include file="Simulation.xml"/>
 
 
     <Include file="concMod1.nml"/>
@@ -25,8 +25,7 @@
 
     <voltageClamp id="vClamp1" delay="150ms" duration="50ms" targetVoltage="10mV" seriesResistance="1ohm"/>
 
-    <network id="net1">
-        <extracellularProperties temperature="32degC"/>
+    <network id="net1" type="networkWithTemperature" temperature="32degC">
         <population id="hhpop" component="SomaGHK" size="1"/>
         <explicitInput target="hhpop[0]" input="pulseGen1"/>
         <explicitInput target="hhpop[0]" input="pulseGen2"/>
@@ -38,27 +37,27 @@
 
     <Simulation id="sim1" length="800ms" step="0.01ms" target="net1">
 
-        <Display id="d1" title="GHK Test: Voltage (mV)" timeScale="1ms">
-            <Line id="l1" quantity="hhpop[0]/v" scale="1mV"  color="#ffffff" save="NML2_LEMS_v.dat"/>
+        <Display id="d1" title="GHK Test: Voltage (mV)" xmin="-50" xmax="850" ymin="-90" ymax="-40" timeScale="1ms">
+            <Line id="v" quantity="hhpop[0]/v" scale="1mV"  color="#ffffff" timeScale="1ms"/>
             <!--<Line id="l5" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/erev" scale="1uA_per_cm2"  color="#00ff00" save="NML2_LEMS_cae.dat"/>-->
         </Display>
 
-        <Display id="d2" title="GHK Test: rate variables" timeScale="1ms">
+        <Display id="d2" title="GHK Test: rate variables" timeScale="1ms" xmin="-50" xmax="850" ymin="-0.01" ymax="1.1">
 
-            <Line id="l1" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/m/q" scale="1"  color="#770fff" save="NML2_LEMS_ca_m.dat"/>
-            <Line id="l2" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/h/q" scale="1"  color="#55f00f" save="NML2_LEMS_ca_h.dat"/><!-- -->
-            <Line id="l3" quantity="hhpop[0]/biophys/membraneProperties/NaF_all/NaF/m/q" scale="1"  color="#77000f" save="NML2_LEMS_na_m.dat"/>
-            <Line id="l4" quantity="hhpop[0]/biophys/membraneProperties/NaF_all/NaF/h/q" scale="1"  color="#7ee00f" save="NML2_LEMS_na_h.dat"/>
+            <Line id="CaLVA/m" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/m/q" scale="1"  color="#770fff" timeScale="1ms"/>
+            <Line id="CaLVA/h" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/CaLVA/h/q" scale="1"  color="#55f00f" timeScale="1ms"/>
+            <Line id="NaF/m" quantity="hhpop[0]/biophys/membraneProperties/NaF_all/NaF/m/q" scale="1"  color="#77000f" timeScale="1ms"/>
+            <Line id="NaF/h" quantity="hhpop[0]/biophys/membraneProperties/NaF_all/NaF/h/q" scale="1"  color="#aaaa0f" timeScale="1ms"/>
  
         </Display>
-
-        <Display id="d3" title="GHK Test: current densities (uA_per_cm2)" timeScale="1ms">
-            <Line id="l5" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/iDensity" scale="1mA_per_cm2"  color="#00ff00" save="NML2_LEMS_ica.dat"/><!--  - -->
-            <Line id="l6" quantity="hhpop[0]/biophys/membraneProperties/NaF_all/iDensity" scale="1mA_per_cm2"  color="#00ffff" save="NML2_LEMS_ina.dat"/>
-        </Display>
 <!--
-       <Display id="d3" title="GHK Test: Ca concentration (mM)" timeScale="1ms">
-            <Line id="li12" quantity="hhpop[0]/caConc" scale="1 mM"  color="#ffffff" save="NML2_LEMS_c2.dat"/>
+        <Display id="d3" title="GHK Test: current densities (uA_per_cm2)" timeScale="1ms" xmin="-50" xmax="850" ymin="-0.01" ymax="1.1">
+            <Line id="CaLVA/i" quantity="hhpop[0]/biophys/membraneProperties/CaLVA_all/iDensity" scale="1mA_per_cm2"  color="#00ff00" timeScale="1ms"/>
+            <Line id="NaF/i" quantity="hhpop[0]/biophys/membraneProperties/NaF_all/iDensity" scale="1mA_per_cm2"  color="#00ffff" timeScale="1ms"/>
+        </Display>
+
+       <Display id="dc" title="GHK Test: Ca concentration (mM)" timeScale="1ms" xmin="-50" xmax="850" ymin="0" ymax="10e-5">
+            <Line id="li12" quantity="hhpop[0]/caConc" scale="1 mM"  color="#ffffff" timeScale="1ms"/>
         </Display> 
 
 

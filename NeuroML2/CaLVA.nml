@@ -1,46 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <neuroml xmlns="http://www.neuroml.org/schema/neuroml2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2  http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd"
+    xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd"
     id="CaLVA">
 
 
     <ionChannel id="CaLVA" conductance="10pS" type="ionChannelHH" species="ca">
         <notes>A High Voltage Activated Ca2+ channel</notes>
-        <gateHH id="m" instances="2">
+        <gate id="m" type="gateHHtauInf" instances="2">
             <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC"/>
 
             <timeCourse type="CaLVA_m_tau"/>
             <steadyState type="HHSigmoidVariable" rate="1" scale="6.2 mV" midpoint="-56 mV"/>
             
-        </gateHH>
-        <gateHH id="h" instances="1">
+        </gate>
+        <gate id="h" type="gateHHtauInf" instances="1">
             <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC"/>
 
             <timeCourse type="CaLVA_h_tau"/>
             <steadyState type="HHSigmoidVariable" rate="1" scale="-4 mV" midpoint="-80 mV"/>
 
-        </gateHH>
+        </gate>
     </ionChannel>
 
 
     <ComponentType name="CaLVA_m_tau" extends="baseVoltageDepTime">
         <Constant name="TIME_SCALE" dimension="time" value="1 ms"/>
         <Constant name="VOLT_SCALE" dimension="voltage" value="1 mV"/>
-        <Behavior>
+        <Dynamics>
             <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
             <DerivedVariable name="t" exposure="t" dimension="time" value="(0.333 / (exp((V + 131) / (-16.7)) + exp((V + 15.8) / 18.2)) + 0.204) * TIME_SCALE"/>
-        </Behavior>
+        </Dynamics>
     </ComponentType>
 
 
     <ComponentType name="CaLVA_h_tau" extends="baseVoltageDepTime">
         <Constant name="TIME_SCALE" dimension="time" value="1 ms"/>
         <Constant name="VOLT_SCALE" dimension="voltage" value="1 mV"/>
-        <Behavior>
+        <Dynamics>
             <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
-            <DerivedVariable name="t" exposure="t" dimension="time" value="(0.333 * exp((V + 466) / 66)) * TIME_SCALE" valueCondition="V  .lt. ( -81 )" valueIfFalse="(0.333 * exp((V + 21) / (-10.5)) + 9.32) * TIME_SCALE"/>
-        </Behavior>
+            <ConditionalDerivedVariable name="t" exposure="t" dimension="time">
+                <Case condition="V  .lt. ( -81 )" value="(0.333 * exp((V + 466) / 66)) * TIME_SCALE"/>
+                <Case value="(0.333 * exp((V + 21) / (-10.5)) + 9.32) * TIME_SCALE"/>
+            </ConditionalDerivedVariable>
+        </Dynamics>
     </ComponentType>
 
 

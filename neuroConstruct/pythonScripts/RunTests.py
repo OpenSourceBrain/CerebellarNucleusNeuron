@@ -82,7 +82,7 @@ def testAll(argv=None):
     # They need to hold for all simulators
     spikeTimesToCheck = {'Soma_CML_0': [87.227, 116.73, 137.124, 157.518, 177.911, 198.305, 218.699, 239.092, 259.486, 279.88, 300.275, 395.835, 491.361, 586.888, 917.153]}
     
-    spikeTimeAccuracy = 1.1  # Too big! LEMS's fault...
+    spikeTimeAccuracy = 2.25  # Too big! LEMS's fault...
 
     report = simManager.checkSims(spikeTimesToCheck = spikeTimesToCheck,
                                   spikeTimeAccuracy = spikeTimeAccuracy)

@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<neuroml xmlns="http://www.neuroml.org/schema/neuroml2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd" id="NaF">
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd"
+         id="NaF">
 
     <notes/>
 
     <ionChannel id="NaF" conductance="10pS" type="ionChannelHH" species="na">
 
-        <notes>Fast Na channel from Steuber et al 2011</notes>
+        <notes/>
+                
+        <annotation>
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+                <rdf:Description rdf:about="NaF">
+                    
+                    <bqbiol:isVersionOf xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+                        <rdf:Bag>
+                            <rdf:li>Na channels</rdf:li>
+                            <rdf:li rdf:resource="http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2"/>
+                        </rdf:Bag>
+                    </bqbiol:isVersionOf>
 
-        <gate id="m" type="gateHH" instances="3">
+                </rdf:Description>
+            </rdf:RDF>
+        </annotation>
+
+        <gate id="m" type="gateHHtauInf" instances="3">
+            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC"/>
             <timeCourse type="NaF_m_tau_tau"/>
-            <steadyState type="HHSigmoidVariable" rate="1" scale="7.3 mV" midpoint="-45 mV"/>
+            <steadyState type="HHSigmoidVariable" rate="1" scale="0.007324V" midpoint="-0.045V"/>
         </gate>
 
-        <gate id="h" type="gateHH" instances="1">
+        <gate id="h" type="gateHHtauInf" instances="1">
+            <q10Settings type="q10ExpTemp" q10Factor="3" experimentalTemp="32 degC"/>
             <timeCourse type="NaF_h_tau_tau"/>
-            <steadyState type="HHSigmoidVariable" rate="1" scale="-5.9 mV" midpoint="-42 mV"/>
+            <steadyState type="HHSigmoidVariable" rate="1" scale="-0.0059V" midpoint="-0.042V"/>
         </gate>
                             
     </ionChannel>
@@ -23,10 +43,10 @@
         <Constant name="TIME_SCALE" dimension="time" value="1 s"/>
         <Constant name="VOLT_SCALE" dimension="voltage" value="1 V"/>
 
-        <Behavior>
+        <Dynamics>
             <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
-            <DerivedVariable name="t" exposure="t" dimension="time" value="(5.83e-3/((exp ((V - 0.0064)/ (-0.009))) + (exp ((V + 0.097)/0.017))) + 2.5e-5) * TIME_SCALE"/>
-        </Behavior>
+            <DerivedVariable name="t" exposure="t" dimension="time" value="(5.833e-3/((exp ((V - 0.0064)/ (-0.009))) + (exp ((V + 0.097)/0.017))) + 2.5e-5) * TIME_SCALE"/>
+        </Dynamics>
 
     </ComponentType>
 
@@ -34,10 +54,10 @@
         <Constant name="TIME_SCALE" dimension="time" value="1 s"/>
         <Constant name="VOLT_SCALE" dimension="voltage" value="1 V"/>
 
-        <Behavior>
+        <Dynamics>
             <DerivedVariable name="V" dimension="none" value="v / VOLT_SCALE"/>
             <DerivedVariable name="t" exposure="t" dimension="time" value="(16.67e-3/((exp ((V - 0.0083)/ (-0.029))) + (exp ((V + 0.066)/0.009))) + 2.0e-04) * TIME_SCALE"/>
-        </Behavior>
+        </Dynamics>
 
     </ComponentType>
 
