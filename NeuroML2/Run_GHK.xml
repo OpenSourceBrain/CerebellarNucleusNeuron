@@ -23,8 +23,6 @@
     <pulseGenerator id="pulseGen1" delay="100ms" duration="100ms" amplitude="-0.01 nA" />
     <pulseGenerator id="pulseGen2" delay="500ms" duration="100ms" amplitude="0.01 nA" />
 
-    <voltageClamp id="vClamp1" delay="150ms" duration="50ms" targetVoltage="10mV" seriesResistance="1ohm"/>
-
     <network id="net1" type="networkWithTemperature" temperature="32degC">
         <population id="hhpop" component="SomaGHK" size="1"/>
         <explicitInput target="hhpop[0]" input="pulseGen1"/>
