@@ -1,2 +1,2 @@
 target: Run_Nernst.xml 
-engine: LEMS
+engine: jNeuroML
