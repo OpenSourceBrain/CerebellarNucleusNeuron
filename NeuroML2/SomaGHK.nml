@@ -4,6 +4,11 @@
     xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 https://raw.github.com/NeuroML/NeuroML2/master/Schemas/NeuroML2/NeuroML_v2beta.xsd"
     id="SomaGHK">
 
+    <include file="concMod1.nml"/>
+    <include file="CaLVA.nml"/>
+    <include file="NaF.nml"/>
+    <include file="Pas.nml"/>
+
     <cell id="SomaGHK">
 
         <morphology id="morphology_SomaGHK">
