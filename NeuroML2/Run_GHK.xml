@@ -12,11 +12,6 @@
     <Include file="Networks.xml"/>
     <Include file="Simulation.xml"/>
 
-
-    <Include file="concMod1.nml"/>
-    <Include file="CaLVA.nml"/>
-    <Include file="NaF.nml"/>
-    <Include file="Pas.nml"/>
     <Include file="SomaGHK.nml"/>
 
 
