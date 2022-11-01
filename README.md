@@ -6,6 +6,5 @@ J Comput Neurosci. 2011 Jun;30(3):633-58
 See http://www.opensourcebrain.org/projects/cerebellarnucleusneuron for more details.
 
 
-[![Build Status](https://travis-ci.com/OpenSourceBrain/CerebellarNucleusNeuron.svg?branch=master)](https://travis-ci.com/OpenSourceBrain/CerebellarNucleusNeuron)
-
+[![Continuous build using OMV](https://github.com/OpenSourceBrain/CerebellarNucleusNeuron/actions/workflows/omv-ci.yml/badge.svg)](https://github.com/OpenSourceBrain/CerebellarNucleusNeuron/actions/workflows/omv-ci.yml)
 
