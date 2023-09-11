@@ -18,3 +18,4 @@ simulations
 *.bak
 *py.class
 *~
+arm64
